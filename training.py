@@ -6,7 +6,6 @@ from os.path import exists
 from datetime import datetime
 import requests
 import threading
-import re
 
 
 """
@@ -32,7 +31,7 @@ save_file = os.path.expanduser(
     os.path.expandvars(os.environ.get("TRAINING_FILE", "~/treenit.csv"))
 )
 location = os.environ.get("TRAINING_LOCATION", "")
-url = "https://www.wttr.in/" + location + "?format=%C+%t+%f+%w+%h"
+url = "https://www.wttr.in/" + location + "?format=%C+|+%t+|+%f+|+%w+|+%h"
 track_weather = os.environ.get("TRAINING_WEATHER", "true").lower() == "true"
 # List is mutable, modifications apply outside
 weather_data = []
@@ -52,13 +51,15 @@ thr.start()
 class Desc(Enum):
     TYPE = "Tyyppi (Juoksu | Hiihto | sali/Ylävartalo | sali/jAlat)"
     DURATION = "Kesto (mmm.ss)"
-    HEART_RATE = "Syke"
+    HEART_RATE_AVG = "Syke keskiarvo"
+    HEART_RATE_MAX = "Syke maksimi"
     DISTANCE = "Matka (km)"
     SPEED = "Keskivauhti (min/km)"
     STRENGTH_ESTIMATE = "Arvio omasta jaksamisesta (1-5)"
     FEELING_ESTIMATE = "Olotila suorituksen jälkeen (1-5)"
     DESCRIPTION = "Kuvaus"
     SAVE = "Muokataanko? (N/y)"
+    DATE = "Päivämäärä"
 
 
 # Few helper functions
@@ -99,8 +100,9 @@ while values[Desc.TYPE].lower()[0:1] not in TRAIN_TYPES:
 
 
 values[Desc.DURATION] = get_number(Desc.DURATION.value + ": ")
-values[Desc.HEART_RATE] = get_number(Desc.HEART_RATE.value + ": ")
 values[Desc.DISTANCE] = get_number(Desc.DISTANCE.value + ": ")
+values[Desc.HEART_RATE_AVG] = get_number(Desc.HEART_RATE_AVG.value + ": ")
+values[Desc.HEART_RATE_MAX] = input(Desc.HEART_RATE_MAX.value + ": ")
 values[Desc.SPEED] = get_number(Desc.SPEED.value + ": ")
 values[Desc.STRENGTH_ESTIMATE] = get_number_in_range(
     Desc.STRENGTH_ESTIMATE.value + ": "
@@ -108,6 +110,7 @@ values[Desc.STRENGTH_ESTIMATE] = get_number_in_range(
 values[Desc.FEELING_ESTIMATE] = get_number_in_range(Desc.FEELING_ESTIMATE.value + ": ")
 values[Desc.DESCRIPTION] = input(Desc.DESCRIPTION.value + ": ")
 values[Desc.SAVE] = input(Desc.SAVE.value + ": ")
+values[Desc.DATE] = datetime.today().strftime("%d-%m-%Y")
 while values[Desc.SAVE].lower()[0:1] not in ["n", "y", ""]:
     values[Desc.SAVE] = input(Desc.SAVE.value)
 
@@ -162,15 +165,19 @@ if not file_exists:
 
 
 # Write result, no loop to ensure that order is always the same
-date = datetime.today().strftime("%d-%m-%Y")
-result = date + "," + values[Desc.TYPE]
-result += "," + values[Desc.DURATION]
-result += "," + values[Desc.HEART_RATE]
-result += "," + values[Desc.DISTANCE]
-result += "," + values[Desc.SPEED]
-result += "," + values[Desc.STRENGTH_ESTIMATE]
-result += "," + values[Desc.FEELING_ESTIMATE]
-result += "," + values[Desc.DESCRIPTION]
+
+result = values[Desc.DATE]
+for o in Desc:
+    if o != Desc.SAVE and o != Desc.DATE:
+        result += "," + values[o]
+# result = date + "," + values[Desc.TYPE]
+# result += "," + values[Desc.DURATION]
+# result += "," + values[Desc.HEART_RATE_MAX]
+# result += "," + values[Desc.DISTANCE]
+# result += "," + values[Desc.SPEED]
+# result += "," + values[Desc.STRENGTH_ESTIMATE]
+# result += "," + values[Desc.FEELING_ESTIMATE]
+# result += "," + values[Desc.DESCRIPTION]
 
 
 if thr.is_alive():
@@ -179,8 +186,8 @@ if thr.is_alive():
 thr.join()  # Will wait till weather complete
 
 if track_weather:
-    data = weather_data[0].split(" ")
-    result += "," + data[0]  # condition
+    data = weather_data[0].split("|")
+    result += "," + data[0].replace(",", ";")  # condition
     result += "," + "".join(
         x for x in data[1] if x.isdigit() or x == "-"
     )  # temperature
