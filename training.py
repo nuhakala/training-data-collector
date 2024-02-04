@@ -1,13 +1,3 @@
-import os
-import subprocess
-import tempfile
-from enum import Enum
-from os.path import exists
-from datetime import datetime
-import requests
-import threading
-
-
 """
 This module is a utility for saving training data. It is a command line tool,
 which asks the user for the data and then saves the data in csv format to given
@@ -25,6 +15,17 @@ IP-address. However, you can set the location (city) wwith `TRAINING_LOCATION`
 env variable if you want.
 """
 
+
+import os
+import subprocess
+import tempfile
+from enum import Enum
+from os.path import exists
+from datetime import datetime
+import requests
+import threading
+
+
 TRAIN_TYPES = ["j", "h", "y", "a"]
 ESTIMATE_VALUES = [1, 2, 3, 4, 5]
 save_file = os.path.expanduser(
@@ -32,15 +33,29 @@ save_file = os.path.expanduser(
 )
 location = os.environ.get("TRAINING_LOCATION", "")
 url = "https://www.wttr.in/" + location + "?format=%C+|+%t+|+%f+|+%w+|+%h"
+
+# Needs to correspond to format separator to generate correct csv-line
+# in case of error in getting weather data
+# Separator is '|' and there is four of them in format.
+num_weather_sections = 4
 track_weather = os.environ.get("TRAINING_WEATHER", "true").lower() == "true"
 # List is mutable, modifications apply outside
 weather_data = []
+error = False
 
 
 # Function for getting weather data asynchronously
 def get_weather_data():
     if track_weather:
-        weather_data.append(requests.get(url).text)
+        try:
+            r = requests.get(url, timeout=10)
+            weather_data.append(r.text)
+        except requests.exceptions.RequestException:
+            print("\n\nError fetching weather data, omitting this time.\n")
+            # Populate weather_data with correct number of elements
+            weather_data.append("")
+            for _ in range(0, 5):
+                weather_data[0] += "|"
 
 
 # Start thread
@@ -127,7 +142,8 @@ if values[Desc.SAVE].lower() == "y" or values[Desc.SAVE].lower() == "yes":
     # Open temp file
     f = tempfile.NamedTemporaryFile(suffix=".tmp")
     initial_message = "# Jokainen avain-arvo pari omalle riville.\n"
-    initial_message += "# Älä laita väärää arvoa, koska niitä ei tarkisteta.\n\n"
+    initial_message += "# Älä laita väärää arvoa, koska niitä ei tarkisteta.\n"
+    initial_message += "# Älä käytä pilkkuja, koska ne sotkee CSV tiedoston.\n\n"
     initial_message += "\n".join(get_message_array())
     f.write(initial_message.encode("utf-8"))
     f.flush()
@@ -187,7 +203,11 @@ thr.join()  # Will wait till weather complete
 
 if track_weather:
     data = weather_data[0].split("|")
+    # Condition can contain multiple value separated by commas, but commas will
+    # break our csv-line, so replace them with ';'
     result += "," + data[0].replace(",", ";")  # condition
+    # Number can be negative, so we need to add the sign with this check, because
+    # isdigit does not recognize negative numbers
     result += "," + "".join(
         x for x in data[1] if x.isdigit() or x == "-"
     )  # temperature
