@@ -8,7 +8,7 @@ This module can also fetch weather data from `wttr.in` if wanted. Weather
 data is fetched asynchronously when filling up the data. Fetching weather data
 can be also disabled.
 
-This module does not have any dependencies, it uses python threads for
+This module does not have any external dependencies, it uses python threads for
 asynchronous execution and `wttr.in` is free website for getting weather data.
 It does not even require API key like OpenWeatherMap API.
 
