@@ -22,9 +22,9 @@ TRAIN_TYPES = [
         "Juoksu",
         [
             Cat.DURATION,
+            Cat.DISTANCE,
             Cat.HEART_RATE_AVG,
             Cat.HEART_RATE_MAX,
-            Cat.DISTANCE,
             Cat.SPEED,
             Cat.STRENGTH_ESTIMATE,
             Cat.FEELING_ESTIMATE,
@@ -66,9 +66,9 @@ TRAIN_TYPES = [
         "Hiihto",
         [
             Cat.DURATION,
+            Cat.DISTANCE,
             Cat.HEART_RATE_AVG,
             Cat.HEART_RATE_MAX,
-            Cat.DISTANCE,
             Cat.SPEED,
             Cat.STRENGTH_ESTIMATE,
             Cat.FEELING_ESTIMATE,
@@ -82,9 +82,9 @@ TRAIN_TYPES = [
         "Kävely",
         [
             Cat.DURATION,
+            Cat.DISTANCE,
             Cat.HEART_RATE_AVG,
             Cat.HEART_RATE_MAX,
-            Cat.DISTANCE,
             Cat.STRENGTH_ESTIMATE,
             Cat.FEELING_ESTIMATE,
             Cat.DESCRIPTION,

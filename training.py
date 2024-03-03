@@ -18,7 +18,8 @@ env variable if you want.
 
 from os.path import exists
 import threading
-from Category import Cat
+# from Category import Cat
+import Category
 import utils
 
 
@@ -37,8 +38,8 @@ for i in training_type.categories:
 
 # ***** Edit info if needed *****
 for i in training_type.categories:
-    if i == Cat.SAVE:
-        edit = i.value.value.lower()
+    if i == Category.Cat.SAVE:
+        edit = i.value.value.lower() if i.value.value else "n"
         if edit == "y" or edit == "yes":
             utils.edit_values(training_type)
 
@@ -48,10 +49,10 @@ save_file = utils.get_save_file_path()
 file_exists = exists(save_file)
 if not file_exists:
     with open(save_file, "x") as f:
-        header_line = utils.get_cat_desc(Cat.DATE)
+        header_line = utils.get_cat_desc(Category.Cat.DATE)
         header_line += ",Tyyppi"
-        for o in Cat:
-            if o != Cat.SAVE:
+        for o in Category.Cat:
+            if o != Category.Cat.SAVE:
                 header_line += utils.get_cat_desc(o)
 
         header_line += utils.get_weather_url()[2]
@@ -63,17 +64,17 @@ if not file_exists:
 result = ""
 # Add date
 for i in training_type.categories:
-    if i == Cat.DATE:
-        result += i.value.value
+    if i == Category.Cat.DATE:
+        result += i.value.value if i.value.value else ""
 
 # Add type
 result += "," + training_type.shorthands[0]
 
 # Add rest of the categories
-for o in Cat:
-    if o != Cat.SAVE and o != Cat.DATE:
+for o in Category.Cat:
+    if o != Category.Cat.SAVE and o != Category.Cat.DATE:
         if o in training_type.categories:
-            result += "," + o.value.value
+            result += "," + o.value.value if o.value.value else ""
         else:
             result += ","
 
