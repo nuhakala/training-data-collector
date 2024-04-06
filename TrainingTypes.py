@@ -93,4 +93,19 @@ TRAIN_TYPES = [
         ],
         ["k"],
     ),
+    TrainingType(
+        "Crossfit",
+        [
+            Cat.DURATION,
+            Cat.DISTANCE,
+            Cat.HEART_RATE_AVG,
+            Cat.HEART_RATE_MAX,
+            Cat.STRENGTH_ESTIMATE,
+            Cat.FEELING_ESTIMATE,
+            Cat.DESCRIPTION,
+            Cat.SAVE,
+            Cat.DATE,
+        ],
+        ["c"]
+        ),
 ]
