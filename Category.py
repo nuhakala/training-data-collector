@@ -10,8 +10,8 @@ class Category:
     description = ""
     unit = ""
     t = str
-    start = None
-    end = None
+    start = None # Alaraja value-muuttujalle
+    end = None # Yläraja value-muuttujalle
     value = None
 
     def __init__(self, desc, unit, value_type, start=None, end=None) -> None:
@@ -41,6 +41,11 @@ class Category:
 def get_number(text):
     """Asks user for input and checks that it is float"""
     user_input = input(text)
+
+    # Allow empty input
+    if user_input == "":
+        return user_input
+
     # Check that input contains only digits and decimal separators
     while not user_input.replace(".", "", 1).isdigit():
         print("Anna numero")
@@ -52,6 +57,10 @@ def get_number(text):
 def get_number_in_range(text, start, end):
     """Ask user for input and checks that it is integer between 'start' and 'end'"""
     user_input = input(text)
+
+    # Allow empty input
+    if user_input == "":
+        return user_input
 
     # Check if start and end are None
     if start == None:
