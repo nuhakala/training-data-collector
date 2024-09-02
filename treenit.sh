@@ -18,6 +18,12 @@ echo_last_training () {
         "h")
             echo "Edellinen treeni oli hiihto."
             ;;
+        "c")
+            echo "Edellinen treeni oli crossfit."
+            ;;
+        "k")
+            echo "Edellinen treeni oli kävely."
+            ;;
         "a")
             echo "Edellinen treeni oli jalkatreeni."
             ;;

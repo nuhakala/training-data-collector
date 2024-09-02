@@ -41,8 +41,15 @@ def get_weather_data(res):
     if track_weather:
         url = get_weather_url()
         try:
+            # For whatever reason using long url gives 200 and basic one gives 503
+            check_status = requests.get("https://www.wttr.in")
             r = requests.get(url[0], timeout=10)
-            res.append(r.text)
+            if check_status.status_code == 200:
+                res.append(r.text)
+            else:
+                res.append("|")
+                for _ in range(0, url[1]):
+                    res[0] += "|"
         except requests.exceptions.RequestException:
             print("\n\nError fetching weather data, omitting this time.\n")
             # Populate weather_data with correct number of elements

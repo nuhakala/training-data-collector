@@ -92,7 +92,7 @@ if utils.track_weather:
     result += "," + data[0].replace(",", ";")  # condition
     # Number can be negative, so we need to add the sign with this check, because
     # isdigit does not recognize negative numbers
-    result += "," + "".join( x for x in data[1] if x.isdigit() or x == "-")  # temperature
+    result += "," + "".join(x for x in data[1] if x.isdigit() or x == "-")  # temperature
     result += "," + "".join(x for x in data[2] if x.isdigit() or x == "-")  # feels like
     result += "," + "".join(x for x in data[3] if x.isdigit() or x == "-")  # wind
     result += "," + "".join(x for x in data[4] if x.isdigit() or x == "-")  # humidity
