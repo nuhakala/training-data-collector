@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # If the env variable is not null, use it. Otherwise use the given default value.
-path="${TRAINING_FILE:=~/treenit.csv}" 
+path="${TRAINING_FILE:=$HOME/treenit.csv}" 
 
 echo_last_training () {
     line=$(tail -1 ${TRAINING_FILE})

@@ -15,7 +15,7 @@ from TrainingTypes import TRAIN_TYPES, TrainingType
 
 def get_save_file_path():
     return os.path.expanduser(
-        os.path.expandvars(os.environ.get("TRAINING_FILE", "~/treenit.csv"))
+        os.path.expandvars(os.environ.get("TRAINING_FILE", "$HOME/treenit.csv"))
     )
 
 
