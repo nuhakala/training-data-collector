@@ -17,7 +17,7 @@ It does not even require API key like OpenWeatherMap API.
 You can configure it via env-variables.
 
 ``` bash
-export TRAINIG_FILE=~/treenit.csv
+export TRAINIG_FILE=$HOME/treenit.csv
 export TRAINING_WEATHER=false
 export TRAINING_LOCATION=aachen
 ```
